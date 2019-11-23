@@ -9,7 +9,7 @@ class LinearRegression:
     def __init__(self):
         return
 
-    def fit(self, X, y, converge=0.00001, max_runs=100, lr=0.001):
+    def fit(self, X, y, converge=0.0001, max_runs=1000, lr=0.01):
         if not isinstance(X, np.ndarray):
             raise TypeError("X should be a numpy arra of shape (n_datapoints, n_features)")
         if not isinstance(y, np.ndarray):
@@ -21,15 +21,13 @@ class LinearRegression:
             preds = np.matmul(X, coeffs.T)
             loss = mse(y, preds)
             grad = np.zeros_like(X[0:1])
-            # print(grad.shape)
-            for i in range(N):
-                x = X[i].reshape(1,-1)
-                res = (y[i] - np.matmul(x, coeffs.T)).reshape(-1,1)
-                grad += np.matmul(res, x)
+            res = (y - preds).T
+            grad = np.matmul(res, X)
             print(run,"Loss: ",loss,"Grad: ", grad)
             grad *= -2/N            
             coeffs -= lr*grad
-        print(preds)
+            if -lr*np.mean(grad) < converge:
+                break
         return coeffs
 
 if __name__ == '__main__':
