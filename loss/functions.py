@@ -11,8 +11,8 @@ def mse(y_true, y_pred):
     --returns:
         mse
     '''
-    y_true = np.array(y_true).reshape(len(y_true), 1)
-    y_pred = np.array(y_pred).reshape(len(y_pred), 1)
+    y_true = np.array(y_true).reshape(-1, 1)
+    y_pred = np.array(y_pred).reshape(-1, 1)
 
     assert y_true.shape == y_pred.shape, "Shape of predicted and true labels is unequal"
 
