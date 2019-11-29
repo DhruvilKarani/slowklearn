@@ -27,7 +27,7 @@ class LinearRegression:
             # print(run,"Loss: ",loss,"Grad: ", grad)
             grad *= -2/N
             coeffs -= lr*grad
-            if abs(np.mean(grad)) < converge:
+            if np.mean(np.abs(grad)) < converge:
                 break
         self.coeffs_ = coeffs
         return coeffs
