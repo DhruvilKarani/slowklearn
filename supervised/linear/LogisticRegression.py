@@ -97,6 +97,7 @@ if __name__ == '__main__':
     y = iris.target
     X = iris.data[y<2]
     y = iris.target[y<2]
+    from sklearn.tree import DecisionTreeClassifier
     log_reg.fit(X,y)
     y_pred = log_reg.predict(X)
     print(log_reg.predict(X))
