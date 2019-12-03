@@ -20,7 +20,7 @@ class KMeans:
         assert distances != []
         return np.argmax(distances), distances
 
-    def fit(self, X, n_iter=10, converge=10e-4):
+    def fit(self, X, n_iter=1000, converge=10e-4):
         N = X.shape[0]
         M = X.shape[1]
         means = np.random.randn(self.n_clusters, M)
@@ -54,7 +54,7 @@ class KMeans:
         return np.mean(preds.ravel() == y.ravel())
 
 if __name__ == '__main__':
-    km = KMeans(3)
-    X = np.array([[1,0,0], [1,0,0], [-1,0,0]])
+    km = KMeans(1)
+    X = np.array([[1,0,0], [0,1,0], [0,0,1]])
     km.fit(X)
     print(km.means_)
