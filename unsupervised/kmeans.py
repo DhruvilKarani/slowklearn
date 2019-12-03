@@ -20,7 +20,7 @@ class KMeans:
         assert distances != []
         return np.argmax(distances), distances
 
-    def fit(self, X, n_iter=1000, converge=10e-4):
+    def fit(self, X, n_iter=100, converge=10e-4):
         N = X.shape[0]
         M = X.shape[1]
         means = np.random.randn(self.n_clusters, M)
