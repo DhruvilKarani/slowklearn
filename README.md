@@ -7,10 +7,10 @@ An sklearn library clone library made for fun.
     .
     |-- loss    #various loss functions
     |-- metrics
-    |-- supervised1
+    |-- supervised
     │   |-- linear
     |       |-- LinearRegression
-            |-- LogisticRegression
+    |       |-- LogisticRegression
     │   |-- tree
     │   |-- test    # Unit tests
     |                 
