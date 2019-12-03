@@ -18,3 +18,7 @@ An sklearn library clone library made for fun.
         |-- kmeans
 ```
 
+## References
+
+### Linear and Logistic Regression
+> <http://cs229.stanford.edu/notes/cs229-notes1.pdf>
