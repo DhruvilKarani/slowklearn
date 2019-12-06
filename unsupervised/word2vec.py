@@ -14,7 +14,7 @@ class Word2Vec:
         self._index2word = None
         self.h = None
         self.u= None
-        self.word2vec = None
+        self.mapvec_ = {}
 
     @staticmethod
     def _vocab(sentences):
@@ -68,6 +68,11 @@ class Word2Vec:
         return list(map(lambda x: [self._word2index[token] for token in x], sentences))
 
 
+    def mapvec(self):
+        for word in self.vocab_:
+            self.mapvec_[word] = self.vector(word)
+
+
     def fit_cbow(self, sentences, lr=10e-3, n_iters=100):
         sentences = list(filter(lambda x: len(x)>0, sentences))
         self.vocab_ = self._vocab(sentences)
@@ -92,12 +97,14 @@ class Word2Vec:
             print(L)
         self.h = h
         self.u = u
+        self.mapvec()
 
     def vector(self, word):
         idx = self._word2index[word]
         x = self._onehot(len(self.vocab_), [idx])
         return self._forward(x, self.h, self.u)
 
+    
 
     def similiraty(self, word1, word2):
         vector1 = self.vector(word1)
@@ -117,3 +124,4 @@ if __name__ == '__main__':
     wordvec.fit_cbow(sentences, 10e-4, 15)
     print(wordvec.vector('are'))
     print(wordvec.similiraty('are', 'food'))
+    print(wordvec.mapvec_['we'])
