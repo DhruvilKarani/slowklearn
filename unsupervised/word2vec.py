@@ -4,6 +4,7 @@ import sys
 sys.path.append('../loss')
 sys.path.append('../')
 from loss.functions import cat_crossentropy
+from scipy.spatial.distance import cosine
 
 class Word2Vec:
     def __init__(self, n_dim = 100):
@@ -11,6 +12,9 @@ class Word2Vec:
         self.vocab_ = None
         self._word2index = None
         self._index2word = None
+        self.h = None
+        self.u= None
+        self.word2vec = None
 
     @staticmethod
     def _vocab(sentences):
@@ -53,7 +57,6 @@ class Word2Vec:
         y = y.reshape(-1,1)
         probs = probs.reshape(-1,1)
         grad = np.zeros_like(h)
-        print(x.shape, y.shape, probs.shape, grad.shape)
         for i in range(grad.shape[0]):
             for j in range(grad.shape[1]):
                 grad[i,j] = np.sum(np.multiply(np.multiply(probs-y,u[j,:].reshape(-1,1)), x))
@@ -65,7 +68,7 @@ class Word2Vec:
         return list(map(lambda x: [self._word2index[token] for token in x], sentences))
 
 
-    def fit_cbow(self, sentences, lr=10e-3, n_iters=10):
+    def fit_cbow(self, sentences, lr=10e-3, n_iters=100):
         sentences = list(filter(lambda x: len(x)>0, sentences))
         self.vocab_ = self._vocab(sentences)
         sent_idx = self._idxed_sentences(sentences)
@@ -76,16 +79,31 @@ class Word2Vec:
             for sentence in sent_idx:
                 for idx in range(len(sentence)):
                 #complete
-                x = self._onehot(len(self.vocab_), sentence[:-1])
-                y = self._onehot(len(self.vocab_), sentence[-1:])
-                y_pred = self._forward(x, h, u)
-                y_probs = self._softmax(y_pred)
-                L = cat_crossentropy(y, y_probs)
-                grad_u = self._grad_u(L, x, h, u)
-                grad_h = self._grad_h(y_probs, y, x, h, u)
-                u -= lr*grad_u
-                h -= lr*grad_h
-                print(L)
+                    non_idx = [element for element in range(len(sentence)) if element!=idx ]
+                    x = self._onehot(len(self.vocab_), [sentence[idx]])
+                    y = self._onehot(len(self.vocab_), [sentence[i] for i in non_idx])
+                    y_pred = self._forward(x, h, u)
+                    y_probs = self._softmax(y_pred)
+                    L = cat_crossentropy(y, y_probs)
+                    grad_u = self._grad_u(L, x, h, u)
+                    grad_h = self._grad_h(y_probs, y, x, h, u)
+                    u -= lr*grad_u
+                    h -= lr*grad_h
+            print(L)
+        self.h = h
+        self.u = u
+
+    def vector(self, word):
+        idx = self._word2index[word]
+        x = self._onehot(len(self.vocab_), [idx])
+        return self._forward(x, self.h, self.u)
+
+
+    def similiraty(self, word1, word2):
+        vector1 = self.vector(word1)
+        vector2 = self.vector(word2)
+        return 1-cosine(vector1, vector2) #only cosine(v, u) is the distance
+
 
 
 
@@ -94,6 +112,8 @@ class Word2Vec:
 
 
 if __name__ == '__main__':
-    wordvec = Word2Vec()
-    sentences = [['how', 'are', 'you'], ['we', 'are', 'great']]
-    print(wordvec.fit_cbow(sentences))
+    wordvec = Word2Vec(4)
+    sentences = [['how', 'are', 'you'], ['we', 'are', 'great'], ['we', 'went', 'to', 'the', 'hotel'], ['food', 'was', 'good']]
+    wordvec.fit_cbow(sentences, 10e-4, 15)
+    print(wordvec.vector('are'))
+    print(wordvec.similiraty('are', 'food'))
