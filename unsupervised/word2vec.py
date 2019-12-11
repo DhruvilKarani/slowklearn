@@ -94,6 +94,7 @@ class Word2Vec:
                     grad_h = self._grad_h(y_probs, y, x, h, u)
                     u -= lr*grad_u
                     h -= lr*grad_h
+                print(L)
             print(L)
         self.h = h
         self.u = u
@@ -121,7 +122,14 @@ class Word2Vec:
 if __name__ == '__main__':
     wordvec = Word2Vec(4)
     sentences = [['how', 'are', 'you'], ['we', 'are', 'great'], ['we', 'went', 'to', 'the', 'hotel'], ['food', 'was', 'good']]
-    wordvec.fit_cbow(sentences, 10e-4, 15)
+    with open('sample.txt') as f:
+        lines = f.readlines()
+        f.close()
+    sentences = [line.split() for line in lines]
+    print(sentences)
+    wordvec.fit_cbow(sentences[:10], 10e-4, 100)
     print(wordvec.vector('are'))
     print(wordvec.similiraty('are', 'food'))
     print(wordvec.mapvec_['we'])
+
+    
