@@ -17,6 +17,8 @@ An sklearn library clone library made for fun.
     |-- unsupervised
         |-- kmeans
         |-- word2vec
+        |-- PCA
+
 ```
 
 ## References
